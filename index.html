@@ -1,0 +1,62 @@
+<!doctype html>
+<html data-ng-app="TodosApp">
+  <head>
+    <title>TODOS</title>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="http://code.angularjs.org/1.0.1/angular-1.0.1.js"></script>
+    <script type="text/javascript" src="http://documentcloud.github.com/underscore/underscore.js"></script>
+    <script type="text/javascript" src="javascript/directives/key_events.js"></script>
+    <script type="text/javascript" src="javascript/todos.js"></script>
+    <link rel="stylesheet" href="http://current.bootstrapcdn.com/bootstrap-v204/css/bootstrap.css" />
+    <link rel="stylesheet" href="css/todos.css" />
+  </head>
+  <body>
+    <script type="text/javascript">
+        function TodosCtrl($scope) {
+            $scope.todos = [
+                { text: 'Learn some angular.js', done: false },
+                { text: 'Be better', done: false }
+            ];
+
+            $scope.done = function() {
+                return _.select($scope.todos, function(todo) { return todo.done; });
+            }
+        
+            $scope.todo = function() {
+                return _.select($scope.todos, function(todo) { return !todo.done; });
+            }            
+        
+            $scope.todoCount = function () { return $scope.todo().length; };
+            $scope.doneCount = function () { return $scope.done().length; };
+        
+            $scope.addTodo = function() {
+              if (!$scope.newTodoText) {
+                alert('Enter some text!');
+              } else {
+                $scope.todos.push({ text: $scope.newTodoText, done: false });
+                $scope.newTodoText = '';
+              }
+            };
+
+            $scope.clearFinished = function() {
+                $scope.todos = $scope.todo();
+            }
+        }
+    </script>
+    <div class="container">
+      <div class="todos" data-ng-controller="TodosCtrl">
+        <h1>Things to do: {{todoCount()}}</h1>
+        <h2>Things done: {{doneCount()}}</h2>
+        <ul>
+          <li data-ng-repeat="todo in todos" class="todo">
+              <input type="checkbox" data-ng-model="todo.done" />
+              <span class="done-{{todo.done}}">{{todo.text}}</span>
+          </li>
+        </ul>
+        <input type="text" data-ng-model="newTodoText" data-keydown="{ 'addTodo()': 13 }" />
+        <button data-ng-click="addTodo()"><i class="icon-plus"></i>Add</button>
+        <button data-ng-click="clearFinished()"><i class="icon-remove"></i>Clear Finished</button>
+      </div>
+    </div>
+  </body>
+</html>
